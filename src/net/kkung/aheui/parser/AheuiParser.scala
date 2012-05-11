@@ -1,4 +1,7 @@
 package net.kkung.aheui.parser
+import scala.collection.mutable.ArrayBuffer
+
+case class AheuiToken(command:Char, cursor:Char, argument:Char)
 
 class AheuiParser {
 
@@ -19,6 +22,19 @@ class AheuiParser {
   }
   
   def parseString(s:String) = {
-    println(s)
+   val codeSpace: ArrayBuffer[ArrayBuffer[AheuiToken]] = new ArrayBuffer[ArrayBuffer[AheuiToken]]()
+   codeSpace += ArrayBuffer[AheuiToken]()
+   
+   s.map(c => {
+     c match {
+       case '\n' => codeSpace += ArrayBuffer[AheuiToken]()
+       case _ => {
+         val _code = splitJamo(c)
+         codeSpace(codeSpace.length-1) +=  new AheuiToken(_code._1, _code._2, _code._3)
+       }
+     }
+   })
+   
+   codeSpace
   }
 }
