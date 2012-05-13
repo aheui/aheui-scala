@@ -1,7 +1,20 @@
 package net.kkung.aheui.parser
 import scala.collection.mutable.ArrayBuffer
 
-case class AheuiToken(command:Char, cursor:Char, argument:Char)
+case class AheuiToken
+case class AheuiBlankToken extends AheuiToken
+case class AheuiMeanToken(command:Char, cursor:Char, argument:Char) extends AheuiToken
+
+object HangulCharacter {
+  def apply(x: Char): Char = x 
+  def unapply(x: Char): Option[Char] = {
+    if ( x < 0xAC00 || x > 0xD7A3) {
+      None
+    } else {
+      Some(x)
+    }
+  }
+}
 
 class AheuiParser {
 
@@ -28,13 +41,19 @@ class AheuiParser {
    s.map(c => {
      c match {
        case '\n' => codeSpace += ArrayBuffer[AheuiToken]()
-       case _ => {
+       case HangulCharacter(_) => {
          val _code = splitJamo(c)
-         codeSpace(codeSpace.length-1) +=  new AheuiToken(_code._1, _code._2, _code._3)
+         codeSpace(codeSpace.length-1) +=  new AheuiMeanToken(_code._1, _code._2, _code._3)
+       }
+       case _@x => {
+         codeSpace(codeSpace.length-1) += new AheuiBlankToken
        }
      }
    })
    
-   codeSpace
+   val width = codeSpace.maxBy(_.length).asInstanceOf[ArrayBuffer[AheuiToken]].length
+   val height = codeSpace.length
+   
+   (width, height, codeSpace)
   }
 }
