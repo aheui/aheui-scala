@@ -51,8 +51,6 @@ class AheuiContext(codes: Array[Array[AheuiToken]], width:Int, height:Int) {
       'ㅇ' -> new AheuiQueue
   )
   
-  val queues:HashMap[Char, Queue[Int]] = HashMap('ㅇ' -> new Queue)
-  
   var current_store = stacks('\0')
   
   var cursor:Cursor = Cursor(0, 0)

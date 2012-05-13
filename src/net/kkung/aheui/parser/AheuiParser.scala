@@ -22,7 +22,7 @@ class AheuiParser {
   final val HANGUL_MIDDLE = Array[Char]('ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ')
   final val HANGUL_LAST = Array[Char]('\0','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ')
   
-  def splitJamo(c:Char):Tuple3[Char, Char, Char] = {
+  def split_jamo(c:Char):Tuple3[Char, Char, Char] = {
     
     if ( c < 0xAC00 || c > 0xD7A3) {
       throw new IllegalArgumentException("%c was not Hangul".format(c));
@@ -42,7 +42,7 @@ class AheuiParser {
      c match {
        case '\n' => codeSpace += ArrayBuffer[AheuiToken]()
        case HangulCharacter(_) => {
-         val _code = splitJamo(c)
+         val _code = split_jamo(c)
          codeSpace(codeSpace.length-1) +=  new AheuiMeanToken(_code._1, _code._2, _code._3)
        }
        case _@x => {
