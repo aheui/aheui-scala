@@ -1,4 +1,6 @@
 package net.kkung.aheui.vm
+import scala.actors.Actor
+import scala.actors.Actor._
 import scala.collection.mutable.ArrayBuffer
 import net.kkung.aheui.parser.AheuiToken
 import scala.collection.immutable.HashMap
@@ -9,7 +11,17 @@ import net.kkung.aheui.parser.AheuiBlankToken
 import scala.collection.mutable.Queue
 
 class AheuiInterpreter {
-  
+
+  case object StopPrinter
+  private val aheuiPrinter:Actor = actor { 
+    loop { 
+      react { 
+        case StopPrinter => exit()
+        case _@p => Console.print(p)
+      }
+    }
+  }
+
   def run(context:AheuiContext) = {
     var can_next:Boolean = true
     var cycles = 0
@@ -19,6 +31,7 @@ class AheuiInterpreter {
       cycles += 1
     }
     
+    aheuiPrinter ! StopPrinter
     println("\nTotal cycle: %d".format(cycles))
   }
   
@@ -33,7 +46,7 @@ class AheuiInterpreter {
       case AheuiBlankToken() => {
         return true
       }
-      case AheuiMeanToken(command, cursor, argument) => {
+      case AheuiMeanToken(command, cursor, argument, code) => {
         
         context.delta = calc_delta(cursor, context.delta)
         
@@ -73,8 +86,8 @@ class AheuiInterpreter {
           case 'ㅁ' => {
             val arg = context.current_store.fetch()
             argument match {
-              case 'ㅇ' => print(arg.toInt)
-              case 'ㅎ' => print(arg.toChar)
+              case 'ㅇ' => aheuiPrinter ! arg.toInt
+              case 'ㅎ' => aheuiPrinter ! arg.toChar
               case _ => {}
             }
           }
@@ -105,7 +118,7 @@ class AheuiInterpreter {
             context.current_store.swap()
           }
           case 'ㅅ' => {
-            context.change_store(argument)
+            context.change_store(code%28)
           }
           case 'ㅆ' => {
             context.stacks(argument).insert(context.current_store.fetch())
