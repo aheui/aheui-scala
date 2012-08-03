@@ -22,36 +22,13 @@ class AheuiContext(codes: Array[Array[AheuiToken]], width:Int, height:Int) {
 
   val code_space:AheuiCode = new AheuiCode(codes)
   
-  val stacks:HashMap[Char, AheuiStore[Long]] = HashMap('\0' -> new AheuiStack,
-      'ㄱ' -> new AheuiStack,
-      'ㄴ' -> new AheuiStack,
-      'ㄷ' -> new AheuiStack, 
-      'ㄹ' -> new AheuiStack, 
-      'ㅁ' -> new AheuiStack,
-      'ㅂ' -> new AheuiStack,
-      'ㅅ' -> new AheuiStack, 
-      'ㅈ' -> new AheuiStack, 
-      'ㅊ' -> new AheuiStack, 
-      'ㅋ' -> new AheuiStack, 
-      'ㅌ' -> new AheuiStack, 
-      'ㅍ' -> new AheuiStack, 
-      'ㄲ' -> new AheuiStack, 
-      'ㄳ' -> new AheuiStack, 
-      'ㄵ' -> new AheuiStack, 
-      'ㄶ' -> new AheuiStack, 
-      'ㄺ' -> new AheuiStack, 
-      'ㄻ' -> new AheuiStack, 
-      'ㄼ' -> new AheuiStack, 
-      'ㄽ' -> new AheuiStack, 
-      'ㄾ' -> new AheuiStack, 
-      'ㄿ' -> new AheuiStack, 
-      'ㅀ' -> new AheuiStack, 
-      'ㅄ' -> new AheuiStack, 
-      'ㅆ' -> new AheuiStack,
-      'ㅇ' -> new AheuiQueue
-  )
+  val stacks:Array[AheuiStore[Long]] = new Array(28)
+  for ( i <- (0 to 27) ) { 
+    stacks(i) = new AheuiStack
+  }
+  stacks(21) = new AheuiQueue
   
-  var current_store = stacks('\0')
+  var current_store = stacks(0)
   
   var cursor:Cursor = Cursor(0, 0)
   var delta:Delta = Delta(0, 0)
@@ -74,7 +51,7 @@ class AheuiContext(codes: Array[Array[AheuiToken]], width:Int, height:Int) {
     return codes(cursor.y)(cursor.x)
   }
   
-  def change_store(name:Char):Unit = current_store = stacks(name)
+  def change_store(index:Int):Unit = current_store = stacks(index)
   
   def wrap:Boolean = {
     if (cursor.x >= codes(cursor.y).length) {

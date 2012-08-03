@@ -1,6 +1,6 @@
 package net.kkung.aheui.vm
 import scala.collection.mutable.Queue
-import scala.collection.mutable.Stack
+import scala.collection.mutable.ArrayStack
 
 /***
  * 아희용 저장 공간 공통 인터페이스
@@ -14,7 +14,7 @@ trait AheuiStore[T] {
   def dup():Unit
 }
 
-class AheuiStack[T] extends Stack[T] with AheuiStore[T] {
+class AheuiStack[T] extends ArrayStack[T] with AheuiStore[T] {
   override def insert(elem:T) = push(elem)
   override def fetch():T = pop()
   override def __head:T = top

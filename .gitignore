@@ -3,7 +3,7 @@
 
 # sbt specific
 dist/*
-target/
+target
 lib_managed/
 src_managed/
 project/boot/
@@ -24,6 +24,11 @@ tmp/**/*
 local.properties
 .settings/
 .loadpath
+
+.ensime
+.ensime_lucene
+
+*.aheui
 
 # External tool builders
 # .externalToolBuilders/
