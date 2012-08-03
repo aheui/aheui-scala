@@ -29,6 +29,7 @@ local.properties
 .ensime_lucene
 
 *.aheui
+*.aheui.bc
 
 # External tool builders
 # .externalToolBuilders/
