@@ -2,7 +2,6 @@ package net.kkung.aheui.vm
 import scala.collection.mutable.Queue
 import scala.collection.immutable.HashMap
 import net.kkung.aheui.parser.AheuiToken
-import net.kkung.aheui.parser.AheuiToken
 
 case class Cursor(var x:Int, var y:Int) {
   def add_delta(delta:Delta) {
@@ -24,9 +23,9 @@ class AheuiContext(codes: Array[Array[AheuiToken]], width:Int, height:Int) {
   
   val stacks:Array[AheuiStore[Long]] = new Array(28)
   for ( i <- (0 to 27) ) { 
-    stacks(i) = new AheuiStack
+    stacks(i) = new AheuiStack[Long]
   }
-  stacks(21) = new AheuiQueue
+  stacks(21) = new AheuiQueue[Long]
   
   var current_store = stacks(0)
   
@@ -55,7 +54,6 @@ class AheuiContext(codes: Array[Array[AheuiToken]], width:Int, height:Int) {
   
   def wrap:Boolean = {
     if (cursor.x >= codes(cursor.y).length) {
-      this.move_cursor();
       true
     } else {
       false
