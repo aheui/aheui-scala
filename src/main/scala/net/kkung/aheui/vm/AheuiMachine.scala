@@ -1,6 +1,4 @@
 package net.kkung.aheui.vm
-import scala.actors.Actor
-import scala.actors.Actor._
 import scala.collection.mutable.ArrayBuffer
 import net.kkung.aheui.parser.AheuiToken
 import scala.collection.immutable.HashMap
@@ -9,16 +7,6 @@ import net.kkung.aheui.parser._
 import scala.collection.mutable.Queue
 
 class AheuiMachine {
-
-  case object StopPrinter
-  private val aheuiPrinter:Actor = actor { 
-    loop { 
-      react { 
-        case StopPrinter => exit()
-        case _@p => Console.print(p)
-      }
-    }
-  }
 
   def run(context:AheuiContext) = {
     var can_next:Boolean = true
@@ -29,8 +17,7 @@ class AheuiMachine {
       cycles += 1
     }
     
-    aheuiPrinter ! StopPrinter
-    aheuiPrinter ! ("\nTotal cycle: %d".format(cycles))
+    println("\nTotal cycle: %d".format(cycles))
   }
   
   def step(context:AheuiContext):Boolean = {
@@ -82,8 +69,8 @@ class AheuiMachine {
           case AheuiTokenPop(_, asInt) => { 
             val arg = context.current_store.fetch()
             asInt match { 
-              case Some(true) => aheuiPrinter ! arg.toInt
-              case Some(false) => aheuiPrinter ! arg.toChar
+              case Some(true) => print(arg.toInt)
+              case Some(false) => print(arg.toChar)
               case _ => { }
             }
           }
@@ -127,18 +114,27 @@ class AheuiMachine {
     }
     return true
   }
+
+  final val DELTA_RIGHT = Delta(1, 0)
+  final val DELTA_RIGHTRIGHT = Delta(2, 0)
+  final val DELTA_LEFT = Delta(-1, 0)
+  final val DELTA_LEFTLEFT = Delta(-2, 0)
+  final val DELTA_UP = Delta(0, -1)
+  final val DELTA_UPUP = Delta(0, -2)
+  final val DELTA_DOWN = Delta(0, 1)
+  final val DELTA_DOWNDOWN = Delta(0, 2)
   
   def calc_delta(delta:AheuiDelta, current:Delta):Delta = {
     
     delta match {
-      case AheuiDeltaRight() => Delta(1, 0)
-      case AheuiDeltaRightRight() => Delta(2, 0)
-      case AheuiDeltaLeft() => Delta(-1, 0)
-      case AheuiDeltaLeftLeft() => Delta(-2, 0)
-      case AheuiDeltaUp() => Delta(0, -1)
-      case AheuiDeltaUpUp() => Delta(0, -2)
-      case AheuiDeltaDown() => Delta(0, 1)
-      case AheuiDeltaDownDown() => Delta(0, 2)
+      case AheuiDeltaRight() => DELTA_RIGHT
+      case AheuiDeltaRightRight() => DELTA_RIGHTRIGHT
+      case AheuiDeltaLeft() => DELTA_LEFT
+      case AheuiDeltaLeftLeft() => DELTA_LEFTLEFT
+      case AheuiDeltaUp() => DELTA_UP
+      case AheuiDeltaUpUp() => DELTA_UPUP
+      case AheuiDeltaDown() => DELTA_DOWN
+      case AheuiDeltaDownDown() => DELTA_DOWNDOWN
       case AheuiDeltaReverseH() => Delta(current.x, -current.y)
       case AheuiDeltaReverse() => Delta(-current.x, -current.y)
       case AheuiDeltaReverseV() => Delta(-current.x, current.y)

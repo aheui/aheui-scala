@@ -19,7 +19,10 @@ object Aheui {
   }
 
   def main(args: Array[String]): Unit = {
-    
+
+    import java.io.{BufferedOutputStream, PrintStream}
+    Console.setOut(new PrintStream(new BufferedOutputStream(new FileOutputStream(java.io.FileDescriptor.out), 512), false, "UTF-8"))
+
     args(0) match { 
 
       case "compile" => compile(args(1))
@@ -30,6 +33,8 @@ object Aheui {
 
       }
     }
+
+    Console.flush
   }
 
   def compile(file:String) = { 
